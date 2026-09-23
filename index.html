@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>서양 고대 윤리 사상 마스터 챌린지</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Nanum+Myeongjo:wght@700;800&family=Black+Han+Sans&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #0b1120; color: #f8fafc; }
+        .title-font { font-family: 'Black Han Sans', sans-serif; }
+        .myeongjo-font { font-family: 'Nanum Myeongjo', serif; }
+        .keep-all { word-break: keep-all; }
+        
+        /* 커스텀 스크롤바 */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); border-radius: 8px; }
+        ::-webkit-scrollbar-thumb { background: rgba(100, 116, 139, 0.5); border-radius: 8px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.8); }
+
+        .slide-enter { animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.99); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-3 sm:p-5 md:p-8">
+
+    <main class="w-full max-w-4xl bg-slate-900/95 border border-slate-800 rounded-3xl shadow-2xl p-5 sm:p-7 md:p-10 flex flex-col justify-between min-h-[720px] relative backdrop-blur-md">
+        
+        <!-- 상단 헤더 및 글로벌 인디케이터 -->
+        <header class="border-b border-slate-800 pb-4 mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <span class="text-3xl filter drop-shadow">🏛️</span>
+                <div>
+                    <h1 class="title-font text-xl sm:text-2xl text-amber-400 tracking-wider">서양 윤리 사상 4대 마스터</h1>
+                    <p class="text-xs text-slate-400 hidden sm:block">소피스트 · 소크라테스 · 플라톤 · 아리스토텔레스</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <span id="score-badge" class="px-3.5 py-1.5 bg-slate-800 border border-slate-700 text-xs sm:text-sm font-bold text-amber-300 rounded-xl shadow-inner">
+                    점수: 0 / 100점
+                </span>
+                <span id="part-indicator" class="px-3.5 py-1.5 bg-amber-500/10 border border-amber-500/30 text-xs sm:text-sm font-bold text-amber-400 rounded-xl">
+                    준비
+                </span>
+            </div>
+        </header>
+
+        <!-- 파트 네비게이션 프로그레스 바 -->
+        <nav id="part-nav" class="grid grid-cols-4 gap-2 mb-4">
+            <div id="step-tab-0" class="p-2 rounded-xl border border-slate-800 bg-slate-950 text-center transition-all opacity-40">
+                <span class="block text-[11px] font-bold text-slate-400">PART 1</span>
+                <span class="block text-xs font-black text-slate-200 truncate">윤리적 상대주의</span>
+            </div>
+            <div id="step-tab-1" class="p-2 rounded-xl border border-slate-800 bg-slate-950 text-center transition-all opacity-40">
+                <span class="block text-[11px] font-bold text-slate-400">PART 2</span>
+                <span class="block text-xs font-black text-slate-200 truncate">소크라테스</span>
+            </div>
+            <div id="step-tab-2" class="p-2 rounded-xl border border-slate-800 bg-slate-950 text-center transition-all opacity-40">
+                <span class="block text-[11px] font-bold text-slate-400">PART 3</span>
+                <span class="block text-xs font-black text-slate-200 truncate">플라톤</span>
+            </div>
+            <div id="step-tab-3" class="p-2 rounded-xl border border-slate-800 bg-slate-950 text-center transition-all opacity-40">
+                <span class="block text-[11px] font-bold text-slate-400">PART 4</span>
+                <span class="block text-xs font-black text-slate-200 truncate">아리스토텔레스</span>
+            </div>
+        </nav>
+
+        <!-- 중앙 동적 렌더링 뷰 영역 -->
+        <section id="quiz-container" class="flex-1 flex flex-col justify-center slide-enter my-2">
+            <!-- 자바스크립트로 동적 출력 -->
+        </section>
+
+        <!-- 하단 조작 컨트롤러 -->
+        <footer id="footer-nav" class="pt-4 border-t border-slate-800 flex items-center justify-between gap-3 mt-4">
+            <button id="prev-btn" onclick="goToPrevStep()" class="hidden px-5 py-2.5 bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-700 text-slate-300 hover:text-white font-bold rounded-xl transition-all text-sm flex items-center gap-1.5">
+                <span>⬅️</span> <span>이전 단계</span>
+            </button>
+            <div class="flex-1"></div>
+            <button id="action-btn" onclick="handleAction()" class="px-7 py-3 bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-black rounded-xl transition-all shadow-lg shadow-amber-500/20 text-sm sm:text-base flex items-center gap-2">
+                <span>도전 시작하기</span> <span>➔</span>
+            </button>
+        </footer>
+
+    </main>
+
+    <!-- 모달: 미입력 안내 모달 -->
+    <div id="custom-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-3xl p-6 max-w-sm w-full shadow-2xl text-center">
+            <div class="text-4xl mb-3">⚠️</div>
+            <h3 class="text-lg font-black text-white mb-2" id="modal-title">확인 안내</h3>
+            <p class="text-sm text-slate-300 mb-6 keep-all" id="modal-desc">답안을 선택하거나 입력하지 않은 문제가 있습니다. 그래도 정답을 확인하시겠습니까?</p>
+            <div class="flex gap-2.5">
+                <button onclick="closeModal(false)" class="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 font-bold text-slate-300 text-sm transition-all">다시 풀기</button>
+                <button onclick="closeModal(true)" class="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 font-black text-slate-950 text-sm transition-all">그대로 제출</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 토스트 알림 컴포넌트 -->
+    <div id="toast-box" class="fixed bottom-6 px-5 py-3 rounded-2xl bg-slate-800/95 border border-slate-700 text-slate-100 text-xs sm:text-sm font-bold shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none z-50 flex items-center gap-2">
+        <span id="toast-icon">✨</span>
+        <span id="toast-msg">복사되었습니다.</span>
+    </div>
+
+    <script>
+        // 학습지 4 & 학습지 5 기반 4파트 12문항 데이터베이스
+        const quizParts = [
+            {
+                partId: 1,
+                scholar: "소피스트 (프로타고라스, 고르기아스, 트라시마코스)",
+                title: "PART 1. 윤리적 상대주의와 소피스트",
+                description: "경험주의·상대주의·실용주의와 보편적 진리 회의론",
+                ox: {
+                    title: "[OX 문제] 소피스트의 진리관과 경험주의",
+                    points: 7,
+                    question: "소피스트는 인간의 감각적 경험을 신뢰할 수 없는 것으로 보아, 이성을 통해서만 파악되는 불변의 보편적 도덕 규범을 확립하고자 하였다.",
+                    options: ["O", "X"],
+                    answer: "X",
+                    explanation: "소피스트는 '감각적 경험'을 지식과 도덕의 근원으로 보았습니다. 감각적 경험은 가변적이고 불완전하므로 절대적이고 보편타당한 진리나 윤리는 존재하지 않는다고 보았습니다."
+                },
+                choice: {
+                    title: "[객관식 문제] 소피스트 사상의 본질",
+                    points: 10,
+                    question: "소피스트들의 윤리적 상대주의 및 실용주의 사상에 대한 설명으로 옳은 것은?",
+                    options: [
+                        "정의란 국가 전체 구성원 모두의 화합과 공익을 뜻한다고 보았다.",
+                        "도덕 판단의 기준은 시대와 문화, 개인에 따라 달라질 수 없다고 보았다.",
+                        "절대적 진리가 없으므로 세속적 가치 획득과 현실적 실용성을 중시하였다.",
+                        "덕에 대한 참된 지식을 갖추면 누구나 필연적으로 도덕적 실천을 행한다고 보았다."
+                    ],
+                    answer: 2,
+                    explanation: "소피스트는 절대적 진리가 없다고 보았기 때문에, 현실적인 유용성(실용성)을 통해서만 지식의 우열을 가릴 수 있다고 여겨 변론술과 수사학을 가르쳤습니다."
+                },
+                subjective: {
+                    title: "[주관식 문제] 프로타고라스의 핵심 명제",
+                    points: 8,
+                    question: "프로타고라스가 주장한 '인간은 ( 이것 )이다'에서 괄호에 들어갈 말로, 모든 사물과 가치 판단의 기준이 개별 인간의 주관적 감각에 달려 있음을 뜻하는 다섯 글자(띄어쓰기 무관)를 쓰시오.",
+                    answers: ["만물의 척도", "만물의척도"],
+                    explanation: "프로타고라스는 '인간은 만물의 척도이다'라고 주장하여, 사람마다 가치판단의 기준이 다르므로 절대적인 옳고 그름의 기준도 없다고 설명했습니다."
+                }
+            },
+            {
+                partId: 2,
+                scholar: "소크라테스",
+                title: "PART 2. 보편주의와 소크라테스",
+                description: "이성주의·주지주의·지덕일치·지행합일·산파술",
+                ox: {
+                    title: "[OX 문제] 소크라테스의 악의 비자발성",
+                    points: 7,
+                    question: "소크라테스에 따르면 인간은 무엇이 선하고 옳은지 참되게 알면서도 순간적인 욕망이나 의지박약 때문에 자발적으로 악행을 저지를 수 있다.",
+                    options: ["O", "X"],
+                    answer: "X",
+                    explanation: "소크라테스는 주지주의와 지행합일의 입장에서 인간은 본성상 덕이 무엇인지 알면서 자발적으로 악행을 할 수는 없으며, '모든 악행의 원인은 무지'라고 보았습니다."
+                },
+                choice: {
+                    title: "[객관식 문제] 소크라테스의 앎과 덕",
+                    points: 10,
+                    question: "소크라테스의 윤리 사상에 대한 설명으로 가장 옳은 것은?",
+                    options: [
+                        "영혼에 관련된 모든 것은 그 자체로 언제나 유익하다.",
+                        "덕은 곧 지식이며, 지식의 유무에 따라 유익해지거나 유해해진다.",
+                        "참된 지혜를 얻기 위해서는 무엇보다 부를 축적해야 한다.",
+                        "악행을 저지르는 사람은 지식을 가지고 있으나 의지가 박약하기 때문이다."
+                    ],
+                    answer: 1,
+                    explanation: "플라톤의 《메논》에 언급된 소크라테스의 논변에 따르면 영혼에 관련된 것들은 그 자체로 유익하지도 유해하지도 않지만, 오직 '지식'이 더해질 때 유익한 덕이 됩니다."
+                },
+                subjective: {
+                    title: "[주관식 문제] 소크라테스의 대화법",
+                    points: 8,
+                    question: "묻고 답하는 이성적 대화를 통해 상대방의 무지를 스스로 자각하게 하고 참된 지식(진리)을 깨닫도록 도와주는 소크라테스의 문답법을 비유적으로 일컫는 세 글자를 쓰시오.",
+                    answers: ["산파술", "문답법", "산파법"],
+                    explanation: "소크라테스는 어머니의 직업인 산파에 빗대어 스스로 무지를 깨닫고 진리를 낳도록 돕는 '산파술(문답법)'을 실천했습니다."
+                }
+            },
+            {
+                partId: 3,
+                scholar: "플라톤",
+                title: "PART 3. 이데아론과 플라톤",
+                description: "이분법적 세계관·영혼 삼분설·4주덕·상기설·철인정치",
+                ox: {
+                    title: "[OX 문제] 플라톤의 절제의 덕",
+                    points: 7,
+                    question: "플라톤에 따르면 '절제'의 덕은 물질적 욕망을 관장하는 생산자 계급에게만 요구되는 배타적인 덕이다.",
+                    options: ["O", "X"],
+                    answer: "X",
+                    explanation: "절제는 '지배받아야 할 부분이 지배할 부분에 복종하는 것'으로, 영혼의 세 부분(이성·기개·욕구) 및 국가의 세 계급(통치자·방위자·생산자) 모두가 공통으로 갖추어야 할 덕입니다."
+                },
+                choice: {
+                    title: "[객관식 문제] 플라톤의 정의(正義)의 덕",
+                    points: 10,
+                    question: "플라톤이 말하는 '정의(正義)'의 덕과 영혼의 상태에 관한 설명으로 가장 적절한 것은?",
+                    options: [
+                        "기개적 부분이 이성의 통제를 벗어나 두려움을 완전히 극복한 상태",
+                        "영혼의 세 부분이 각자 고유한 역할을 훌륭히 수행하며 서로 간섭하지 않고 조화를 이룬 상태",
+                        "감각적 경험을 통해 현상계의 사물들을 직접 관찰하여 얻는 실용적 의견의 상태",
+                        "다수 대중의 자유로운 투표와 민주적 합의를 통해 법률을 제정하고 지배하는 상태"
+                    ],
+                    answer: 1,
+                    explanation: "플라톤에게 정의란 영혼의 세 부분(이성, 기개, 욕구)이 각자 지혜, 용기, 절제의 덕을 발휘하며 서로 참견하지 않고 조화를 이루는 상태입니다."
+                },
+                subjective: {
+                    title: "[주관식 문제] 플라톤의 교육관",
+                    points: 8,
+                    question: "본래 완전한 이데아의 세계에 있던 영혼이 현상계에 태어나더라도, 이성을 통해 잊고 있던 이데아에 대한 지식을 다시 떠올려 깨달을 수 있다는 플라톤의 학설을 세 글자로 쓰시오.",
+                    answers: ["상기설"],
+                    explanation: "플라톤은 교육이란 새로운 지식을 주입하는 것이 아니라, 영혼이 이미 갖고 있던 이데아의 앎을 이성을 통해 일깨우는 '상기설'이라고 보았습니다."
+                }
+            },
+            {
+                partId: 4,
+                scholar: "아리스토텔레스",
+                title: "PART 4. 목적론과 아리스토텔레스",
+                description: "일원론적 현실주의·행복과 최고선·중용과 습관·주의주의",
+                ox: {
+                    title: "[OX 문제] 중용(中庸)의 적용 범위",
+                    points: 7,
+                    question: "아리스토텔레스에 따르면 절도, 살인, 시기와 같이 그 자체로 나쁜 행위나 감정도 특수한 도덕적 상황에서는 적절한 중용이 성립할 수 있다.",
+                    options: ["O", "X"],
+                    answer: "X",
+                    explanation: "아리스토텔레스는 '그 자체로 나쁜 감정이나 행동(절도, 간통, 살인 등)'에는 지나침이나 모자람의 중간인 중용이 성립할 수 없다고 명확히 밝혔습니다."
+                },
+                choice: {
+                    title: "[객관식 문제] 아리스토텔레스의 덕과 행복",
+                    points: 10,
+                    question: "아리스토텔레스의 덕론 및 행복론에 대한 설명으로 옳은 것은?",
+                    options: [
+                        "품성적 덕은 인간이 태어날 때부터 완성된 형태로 타고나는 선천적 본성이다.",
+                        "인간 삶의 궁극적 목적인 행복은 덕, 즉 이성이 탁월하게 발휘되는 영혼의 활동이다.",
+                        "실천적 지혜만 갖추면 실천 의지가 없더라도 결코 자제력 없는 행동을 하지 않는다.",
+                        "참된 좋음(선)은 현실 세계와 단절된 채 초월적 세계에 분리되어 실재하는 이데아이다."
+                    ],
+                    answer: 1,
+                    explanation: "아리스토텔레스는 모든 행위의 궁극적 목적인 최고선은 '행복'이며, 행복은 '이성이 탁월하게 발휘되는 상태(덕)에 따르는 영혼의 활동'이라고 정의했습니다."
+                },
+                subjective: {
+                    title: "[주관식 문제] 아리스토텔레스의 주의주의(主意主義)",
+                    points: 8,
+                    question: "이성적 지식을 갖고 있음에도 실천 의지가 부족하여 감정이나 욕구에 굴복해 버리는 도덕적 실패 상태를 일컫는 다섯 글자(띄어쓰기 무관)를 쓰시오.",
+                    answers: ["자제력 없음", "자제력없음"],
+                    explanation: "아리스토텔레스는 소크라테스의 주지주의를 비판하며 앎이 있어도 의지가 약해 감정에 굴복하는 '자제력 없음'을 제시했습니다."
+                }
+            }
+        ];
+
+        let currentScreen = "start"; // "start", "quiz", "review", "result"
+        let currentPartIdx = 0; // 0 ~ 3
+        
+        // 유저 답안 보존 상태
+        const userProgress = [
+            { ox: null, choice: null, subjective: "", isReviewed: false, earnedScore: 0 },
+            { ox: null, choice: null, subjective: "", isReviewed: false, earnedScore: 0 },
+            { ox: null, choice: null, subjective: "", isReviewed: false, earnedScore: 0 },
+            { ox: null, choice: null, subjective: "", isReviewed: false, earnedScore: 0 }
+        ];
+
+        let pendingNextAction = null;
+
+        function showToast(message, icon = "✨") {
+            const toast = document.getElementById("toast-box");
+            const toastMsg = document.getElementById("toast-msg");
+            const toastIcon = document.getElementById("toast-icon");
+            if (!toast) return;
+
+            toastMsg.innerText = message;
+            toastIcon.innerText = icon;
+            toast.classList.remove("translate-y-20", "opacity-0");
+            toast.classList.add("translate-y-0", "opacity-100");
+
+            setTimeout(() => {
+                toast.classList.remove("translate-y-0", "opacity-100");
+                toast.classList.add("translate-y-20", "opacity-0");
+            }, 2300);
+        }
+
+        function calculateTotalScore() {
+            return userProgress.reduce((sum, part) => sum + (part.earnedScore || 0), 0);
+        }
+
+        function updateTabs() {
+            for (let i = 0; i < 4; i++) {
+                const tab = document.getElementById(`step-tab-${i}`);
+                if (!tab) continue;
+                if (currentScreen === "start") {
+                    tab.className = "p-2 rounded-xl border border-slate-800 bg-slate-950 text-center transition-all opacity-40";
+                } else if (currentScreen === "result") {
+                    tab.className = "p-2 rounded-xl border border-emerald-500/40 bg-emerald-950/30 text-center transition-all";
+                } else {
+                    if (i === currentPartIdx) {
+                        tab.className = "p-2 rounded-xl border-2 border-amber-500 bg-amber-500/10 text-center transition-all shadow-md shadow-amber-500/10";
+                    } else if (i < currentPartIdx || userProgress[i].isReviewed) {
+                        tab.className = "p-2 rounded-xl border border-emerald-500/40 bg-emerald-950/20 text-center transition-all";
+                    } else {
+                        tab.className = "p-2 rounded-xl border border-slate-800 bg-slate-950 text-center transition-all opacity-40";
+                    }
+                }
+            }
+        }
+
+        function render() {
+            const container = document.getElementById("quiz-container");
+            const actionBtn = document.getElementById("action-btn");
+            const prevBtn = document.getElementById("prev-btn");
+            const partIndicator = document.getElementById("part-indicator");
+            const scoreBadge = document.getElementById("score-badge");
+
+            const totalScore = calculateTotalScore();
+            scoreBadge.innerText = `점수: ${totalScore} / 100점`;
+            updateTabs();
+
+            // 1. 시작 화면
+            if (currentScreen === "start") {
+                partIndicator.innerText = "도전 대기";
+                prevBtn.classList.add("hidden");
+                actionBtn.innerHTML = `<span>도전 시작하기</span> <span>➔</span>`;
+                actionBtn.className = "px-7 py-3 bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-black rounded-xl transition-all shadow-lg shadow-amber-500/20 text-sm sm:text-base flex items-center gap-2";
+
+                container.innerHTML = `
+                    <div class="w-full bg-slate-800/60 border border-slate-700/80 rounded-3xl p-6 sm:p-9 md:p-12 text-center text-slate-100 shadow-xl flex flex-col items-center justify-center">
+                        <span class="px-3.5 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-black rounded-full uppercase tracking-wider mb-4">
+                            2학기 윤리와 사상 · 서양 윤리 마스터
+                        </span>
+
+                        <h2 class="myeongjo-font text-2xl sm:text-3xl md:text-4xl font-black text-amber-400 leading-tight mb-3">
+                            “도덕의 근원과 앎(知)과 행(行)의 관계”
+                        </h2>
+
+                        <p class="text-base sm:text-lg text-slate-300 font-medium mb-6 keep-all max-w-2xl">
+                            소피스트의 감각적 경험주의부터 소크라테스·플라톤의 이성주의, 아리스토텔레스의 실천적 현실주의까지 핵심 12문항을 완성해보세요.
+                        </p>
+
+                        <div class="w-full max-w-2xl grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-6 text-left">
+                            <div class="p-3 bg-slate-900/80 rounded-2xl border border-slate-700">
+                                <span class="text-xs font-bold text-amber-400 block mb-1">PART 1</span>
+                                <p class="text-xs font-bold text-white">소피스트</p>
+                                <p class="text-[11px] text-slate-400 mt-0.5">상대주의·실용주의</p>
+                            </div>
+                            <div class="p-3 bg-slate-900/80 rounded-2xl border border-slate-700">
+                                <span class="text-xs font-bold text-cyan-400 block mb-1">PART 2</span>
+                                <p class="text-xs font-bold text-white">소크라테스</p>
+                                <p class="text-[11px] text-slate-400 mt-0.5">주지주의·지덕일치</p>
+                            </div>
+                            <div class="p-3 bg-slate-900/80 rounded-2xl border border-slate-700">
+                                <span class="text-xs font-bold text-indigo-400 block mb-1">PART 3</span>
+                                <p class="text-xs font-bold text-white">플라톤</p>
+                                <p class="text-[11px] text-slate-400 mt-0.5">이데아론·4주덕</p>
+                            </div>
+                            <div class="p-3 bg-slate-900/80 rounded-2xl border border-slate-700">
+                                <span class="text-xs font-bold text-emerald-400 block mb-1">PART 4</span>
+                                <p class="text-xs font-bold text-white">아리스토텔레스</p>
+                                <p class="text-[11px] text-slate-400 mt-0.5">목적론·중용·습관</p>
+                            </div>
+                        </div>
+
+                        <p class="text-xs font-semibold text-slate-400">
+                            파트별 OX(7점) + 객관식(10점) + 주관식(8점) = 파트당 25점 (총 100점 만점)
+                        </p>
+                    </div>
+                `;
+            } 
+            else if (currentScreen === "quiz") {
+                const part = quizParts[currentPartIdx];
+                const curAns = userProgress[currentPartIdx];
+
+                partIndicator.innerText = `PART ${currentPartIdx + 1} / 4`;
+                prevBtn.classList.remove("hidden");
+                actionBtn.innerHTML = `<span>정답 및 해설 확인</span> <span>➔</span>`;
+                actionBtn.className = "px-7 py-3 bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-black rounded-xl transition-all shadow-lg shadow-amber-500/20 text-sm sm:text-base flex items-center gap-2";
+
+                container.innerHTML = `
+                    <div class="mb-3">
+                        <span class="text-xs font-extrabold px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-lg uppercase tracking-wider">${part.scholar}</span>
+                        <h2 class="text-lg sm:text-xl font-black text-white mt-1.5 flex items-center justify-between">
+                            <span>${part.title}</span>
+                            <span class="text-xs font-normal text-slate-400">배점 총 25점</span>
+                        </h2>
+                        <p class="text-xs text-slate-400">${part.description}</p>
+                    </div>
+
+                    <div class="space-y-3.5 overflow-y-auto max-h-[460px] pr-1.5">
+                        
+                        <!-- 1. OX 문제 -->
+                        <div class="bg-slate-800/70 p-4 rounded-2xl border border-slate-700/80 shadow-md">
+                            <div class="flex items-center justify-between mb-1.5">
+                                <span class="text-xs font-bold text-amber-400">${part.ox.title}</span>
+                                <span class="text-xs font-bold text-slate-400">${part.ox.points}점</span>
+                            </div>
+                            <p class="text-sm font-medium text-slate-100 mb-3 leading-relaxed keep-all">${part.ox.question}</p>
+                            <div class="grid grid-cols-2 gap-3 max-w-xs">
+                                <button onclick="selectOx('O')" class="py-2.5 rounded-xl font-black text-base border-2 transition-all active:scale-95 ${curAns.ox === 'O' ? 'border-amber-400 bg-amber-500/20 text-amber-300 shadow-md shadow-amber-500/10' : 'border-slate-700 bg-slate-900 text-slate-300 hover:border-slate-500'}">O</button>
+                                <button onclick="selectOx('X')" class="py-2.5 rounded-xl font-black text-base border-2 transition-all active:scale-95 ${curAns.ox === 'X' ? 'border-amber-400 bg-amber-500/20 text-amber-300 shadow-md shadow-amber-500/10' : 'border-slate-700 bg-slate-900 text-slate-300 hover:border-slate-500'}">X</button>
+                            </div>
+                        </div>
+
+                        <!-- 2. 객관식 문제 -->
+                        <div class="bg-slate-800/70 p-4 rounded-2xl border border-slate-700/80 shadow-md">
+                            <div class="flex items-center justify-between mb-1.5">
+                                <span class="text-xs font-bold text-amber-400">${part.choice.title}</span>
+                                <span class="text-xs font-bold text-slate-400">${part.choice.points}점</span>
+                            </div>
+                            <p class="text-sm font-medium text-slate-100 mb-3 leading-relaxed keep-all">${part.choice.question}</p>
+                            <div class="grid grid-cols-1 gap-2">
+                                ${part.choice.options.map((opt, idx) => `
+                                    <button onclick="selectChoice(${idx})" class="p-3 rounded-xl text-left text-xs sm:text-sm font-medium border-2 transition-all flex items-start gap-2.5 active:scale-[0.99] ${curAns.choice === idx ? 'border-amber-400 bg-amber-500/20 text-amber-300 shadow-md shadow-amber-500/10' : 'border-slate-700 bg-slate-900 text-slate-300 hover:border-slate-500'}">
+                                        <span class="w-5 h-5 flex-shrink-0 flex items-center justify-center rounded-md bg-slate-800 text-xs font-black ${curAns.choice === idx ? 'bg-amber-500 text-slate-950' : 'text-amber-400'}">${idx + 1}</span>
+                                        <span class="keep-all leading-snug">${opt}</span>
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- 3. 주관식 문제 -->
+                        <div class="bg-slate-800/70 p-4 rounded-2xl border border-slate-700/80 shadow-md">
+                            <div class="flex items-center justify-between mb-1.5">
+                                <span class="text-xs font-bold text-amber-400">${part.subjective.title}</span>
+                                <span class="text-xs font-bold text-slate-400">${part.subjective.points}점</span>
+                            </div>
+                            <p class="text-sm font-medium text-slate-100 mb-3 leading-relaxed keep-all">${part.subjective.question}</p>
+                            <input type="text" id="sub-input" value="${curAns.subjective || ''}" oninput="handleSubInput(this.value)" onkeydown="if(event.key==='Enter') handleAction()" placeholder="정답을 입력하세요" class="w-full max-w-md px-4 py-2.5 bg-slate-900 border-2 border-slate-700 rounded-xl text-slate-100 text-sm font-bold focus:outline-none focus:border-amber-400 transition-all">
+                        </div>
+
+                    </div>
+                `;
+            } 
+            else if (currentScreen === "review") {
+                const part = quizParts[currentPartIdx];
+                const curAns = userProgress[currentPartIdx];
+
+                partIndicator.innerText = `PART ${currentPartIdx + 1} 풀이`;
+                prevBtn.classList.remove("hidden");
+                actionBtn.innerHTML = currentPartIdx === quizParts.length - 1 ? `<span>최종 성적표 확인</span> <span>➔</span>` : `<span>다음 파트 (${currentPartIdx + 2}/4) 이동</span> <span>➔</span>`;
+                actionBtn.className = "px-7 py-3 bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-slate-950 font-black rounded-xl transition-all shadow-lg shadow-emerald-500/20 text-sm sm:text-base flex items-center gap-2";
+
+                const isOxCorrect = curAns.ox === part.ox.answer;
+                const isChoiceCorrect = curAns.choice === part.choice.answer;
+                const isSubCorrect = part.subjective.answers.some(a => a.replace(/\s+/g, '').toLowerCase() === (curAns.subjective || '').replace(/\s+/g, '').toLowerCase());
+
+                container.innerHTML = `
+                    <div class="mb-3 flex items-center justify-between">
+                        <div>
+                            <span class="text-xs font-extrabold px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full">정답 및 해설 검토</span>
+                            <h2 class="text-lg sm:text-xl font-black text-white mt-1.5">${part.title} - 결과</h2>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs text-slate-400">파트 획득 점수</span>
+                            <p class="text-lg font-black text-amber-400">${curAns.earnedScore} <span class="text-xs text-slate-400">/ 25점</span></p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3.5 overflow-y-auto max-h-[460px] pr-1.5">
+                        
+                        <!-- OX 풀이 -->
+                        <div class="p-4 rounded-2xl border ${isOxCorrect ? 'bg-emerald-950/20 border-emerald-500/40' : 'bg-rose-950/20 border-rose-500/40'}">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-xs text-slate-300">${part.ox.title}</span>
+                                <span class="font-black text-xs ${isOxCorrect ? 'text-emerald-400' : 'text-rose-400'}">
+                                    ${isOxCorrect ? `정답 (+${part.ox.points}점)` : '오답 (0점)'}
+                                </span>
+                            </div>
+                            <p class="text-xs sm:text-sm font-bold text-amber-300 mb-1.5">
+                                정답: ${part.ox.answer} <span class="text-slate-400 font-normal">(제출: ${curAns.ox || '미선택'})</span>
+                            </p>
+                            <p class="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+                                💡 ${part.ox.explanation}
+                            </p>
+                        </div>
+
+                        <!-- 객관식 풀이 -->
+                        <div class="p-4 rounded-2xl border ${isChoiceCorrect ? 'bg-emerald-950/20 border-emerald-500/40' : 'bg-rose-950/20 border-rose-500/40'}">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-xs text-slate-300">${part.choice.title}</span>
+                                <span class="font-black text-xs ${isChoiceCorrect ? 'text-emerald-400' : 'text-rose-400'}">
+                                    ${isChoiceCorrect ? `정답 (+${part.choice.points}점)` : '오답 (0점)'}
+                                </span>
+                            </div>
+                            <p class="text-xs sm:text-sm font-bold text-amber-300 mb-1.5">
+                                정답: ${part.choice.answer + 1}번. ${part.choice.options[part.choice.answer]}
+                                <span class="text-slate-400 font-normal block sm:inline mt-0.5 sm:mt-0">(제출: ${curAns.choice !== null ? `${curAns.choice + 1}번` : '미선택'})</span>
+                            </p>
+                            <p class="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+                                💡 ${part.choice.explanation}
+                            </p>
+                        </div>
+
+                        <!-- 주관식 풀이 -->
+                        <div class="p-4 rounded-2xl border ${isSubCorrect ? 'bg-emerald-950/20 border-emerald-500/40' : 'bg-rose-950/20 border-rose-500/40'}">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-xs text-slate-300">${part.subjective.title}</span>
+                                <span class="font-black text-xs ${isSubCorrect ? 'text-emerald-400' : 'text-rose-400'}">
+                                    ${isSubCorrect ? `정답 (+${part.subjective.points}점)` : '오답 (0점)'}
+                                </span>
+                            </div>
+                            <p class="text-xs sm:text-sm font-bold text-amber-300 mb-1.5">
+                                인정 정답: ${part.subjective.answers[0]} 
+                                <span class="text-slate-400 font-normal">(제출: ${curAns.subjective || '미입력'})</span>
+                            </p>
+                            <p class="text-xs text-slate-300 leading-relaxed bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+                                💡 ${part.subjective.explanation}
+                            </p>
+                        </div>
+
+                    </div>
+                `;
+            } 
+            else if (currentScreen === "result") {
+                partIndicator.innerText = "도전 완료";
+                prevBtn.classList.remove("hidden");
+                actionBtn.innerHTML = `<span>처음부터 다시 도전</span> <span>🔄</span>`;
+                actionBtn.className = "px-7 py-3 bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-black rounded-xl transition-all shadow-lg shadow-amber-500/20 text-sm sm:text-base flex items-center gap-2";
+
+                let gradeTitle = "철학의 거장 (Master)";
+                let gradeColor = "text-amber-400";
+                if (totalScore < 60) {
+                    gradeTitle = "아카데미아 수습생 (Novice)";
+                    gradeColor = "text-slate-300";
+                } else if (totalScore < 85) {
+                    gradeTitle = "지혜의 탐구자 (Philosopher)";
+                    gradeColor = "text-cyan-400";
+                }
+
+                container.innerHTML = `
+                    <div class="text-center py-2 sm:py-4">
+                        <div class="text-5xl mb-2">📜</div>
+                        <h2 class="title-font text-2xl sm:text-3xl text-amber-400 mb-1">고대 서양 윤리 마스터 챌린지 수료!</h2>
+                        <p class="text-xs sm:text-sm text-slate-300 mb-5">12개 전 문항에 대한 이성적 탐구를 모두 마쳤습니다.</p>
+
+                        <!-- 점수 카드 -->
+                        <div class="inline-flex flex-col items-center px-8 py-4 bg-slate-800/90 border border-slate-700 rounded-3xl mb-5 shadow-xl">
+                            <span class="text-xs font-bold text-slate-400 mb-1">최종 종합 성적</span>
+                            <span class="text-4xl sm:text-5xl font-black text-white">
+                                ${totalScore} <span class="text-xl text-amber-400 font-bold">/ 100점</span>
+                            </span>
+                            <span class="mt-2 text-xs font-black px-3 py-1 bg-amber-500/20 ${gradeColor} rounded-full border border-amber-500/30">
+                                칭호: ${gradeTitle}
+                            </span>
+                        </div>
+
+                        <!-- 4개 파트별 성적 요약 카드 -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 max-w-2xl mx-auto mb-5 text-left text-xs">
+                            ${quizParts.map((p, idx) => `
+                                <div class="p-3 bg-slate-800/60 rounded-2xl border border-slate-700">
+                                    <span class="font-bold text-slate-400 block mb-0.5">PART ${idx + 1}</span>
+                                    <span class="font-extrabold text-white block truncate mb-1">${p.scholar.split(' ')[0]}</span>
+                                    <span class="font-black text-amber-300 text-sm">${userProgress[idx].earnedScore} / 25점</span>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <!-- 4대 사상 1분 핵심 요약표 -->
+                        <div class="max-w-2xl mx-auto p-4 bg-slate-900/90 rounded-2xl border border-slate-800 text-left text-xs text-slate-300 leading-relaxed">
+                            <p class="font-black text-amber-300 mb-2 flex items-center gap-1.5 text-sm">
+                                <span>📌</span> <span>4대 사상 핵심 쟁점 한눈에 정리</span>
+                            </p>
+                            <ul class="space-y-1.5 list-disc list-inside">
+                                <li><b>소피스트:</b> 감각적 경험 중시, 윤리적 상대주의, 진리의 절대성 부정, 현실적 실용성 강조.</li>
+                                <li><b>소크라테스:</b> 이성 중심의 보편주의, 무지의 자각, 지덕복합일, 악의 비자발성, 산파술.</li>
+                                <li><b>플라톤:</b> 이데아계와 현상계의 이분법, 영혼 삼분설(이성·기개·욕구), 4주덕의 조화(정의), 상기설.</li>
+                                <li><b>아리스토텔레스:</b> 현실주의 목적론, 최고선으로서의 행복, 지성적 덕과 품성적 덕(중용·습관), 주의주의.</li>
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function selectOx(val) {
+            userProgress[currentPartIdx].ox = val;
+            render();
+        }
+
+        function selectChoice(idx) {
+            userProgress[currentPartIdx].choice = idx;
+            render();
+        }
+
+        function handleSubInput(val) {
+            userProgress[currentPartIdx].subjective = val;
+        }
+
+        function calculatePartScore(partIdx) {
+            const part = quizParts[partIdx];
+            const curAns = userProgress[partIdx];
+            let partScore = 0;
+
+            if (curAns.ox === part.ox.answer) {
+                partScore += part.ox.points;
+            }
+            if (curAns.choice === part.choice.answer) {
+                partScore += part.choice.points;
+            }
+            if (curAns.subjective) {
+                const cleanInput = curAns.subjective.replace(/\s+/g, '').toLowerCase();
+                const isMatch = part.subjective.answers.some(ans => ans.replace(/\s+/g, '').toLowerCase() === cleanInput);
+                if (isMatch) {
+                    partScore += part.subjective.points;
+                }
+            }
+
+            curAns.earnedScore = partScore;
+            curAns.isReviewed = true;
+        }
+
+        function handleAction() {
+            if (currentScreen === "start") {
+                currentScreen = "quiz";
+                currentPartIdx = 0;
+                render();
+            } else if (currentScreen === "quiz") {
+                const curAns = userProgress[currentPartIdx];
+                const isUnanswered = (curAns.ox === null || curAns.choice === null || !curAns.subjective.trim());
+
+                if (isUnanswered) {
+                    openModal(
+                        "미답변 문항 안내",
+                        "선택하지 않거나 입력하지 않은 문항이 있습니다. 그래도 채점하고 해설을 확인하시겠습니까?",
+                        () => {
+                            calculatePartScore(currentPartIdx);
+                            currentScreen = "review";
+                            render();
+                        }
+                    );
+                    return;
+                }
+
+                calculatePartScore(currentPartIdx);
+                currentScreen = "review";
+                render();
+            } else if (currentScreen === "review") {
+                if (currentPartIdx < quizParts.length - 1) {
+                    currentPartIdx++;
+                    // 다음 파트가 이미 풀린 상태가 아니면 퀴즈 모드로, 이미 검토 완료되었으면 퀴즈 모드 유지
+                    currentScreen = "quiz";
+                    render();
+                } else {
+                    currentScreen = "result";
+                    render();
+                }
+            } else if (currentScreen === "result") {
+                // 전체 초기화
+                for (let i = 0; i < 4; i++) {
+                    userProgress[i] = { ox: null, choice: null, subjective: "", isReviewed: false, earnedScore: 0 };
+                }
+                currentScreen = "start";
+                currentPartIdx = 0;
+                showToast("새로운 도전이 시작되었습니다!", "🚀");
+                render();
+            }
+        }
+
+        function goToPrevStep() {
+            if (currentScreen === "quiz") {
+                if (currentPartIdx === 0) {
+                    currentScreen = "start";
+                } else {
+                    // 이전 파트의 검토 화면으로 이동
+                    currentPartIdx--;
+                    currentScreen = "review";
+                }
+                render();
+            } else if (currentScreen === "review") {
+                // 현재 파트의 문제 풀이 화면으로 돌아가기 (답 수정 가능)
+                currentScreen = "quiz";
+                render();
+            } else if (currentScreen === "result") {
+                // 마지막 4파트 검토 화면으로 돌아가기
+                currentPartIdx = 3;
+                currentScreen = "review";
+                render();
+            }
+        }
+
+        function openModal(title, desc, onConfirm) {
+            const modal = document.getElementById("custom-modal");
+            const modalTitle = document.getElementById("modal-title");
+            const modalDesc = document.getElementById("modal-desc");
+            
+            modalTitle.innerText = title;
+            modalDesc.innerText = desc;
+            pendingNextAction = onConfirm;
+            modal.classList.remove("hidden");
+        }
+
+        function closeModal(proceed) {
+            const modal = document.getElementById("custom-modal");
+            modal.classList.add("hidden");
+            if (proceed && typeof pendingNextAction === 'function') {
+                pendingNextAction();
+            }
+            pendingNextAction = null;
+        }
+
+        window.onload = function() {
+            render();
+        };
+    </script>
+</body>
+</html>
